@@ -1,3 +1,10 @@
+"""This python code is for querying data from my classic movies database
+    Here are a list of options you can choose to query from this database: 
+    1. View all the movies in a random list
+    2. View all the movies in a ordered list (ordered by year of release or ordered by rating)
+    3. View a specific subset of the movies database that contains movies from within a certain timeframe or from a specific director
+    4. If you don't want to query this database you can quit the program"""
+
 import sqlite3
 
 #Connect to the movies database
@@ -27,6 +34,18 @@ def timeframe():
     else:
         print("There are no movies within that timeframe!")
 
+def director_movies():
+    query = "SELECT * FROM movies WHERE director LIKE ?"
+    cursor.execute(query, ('%' + director + '%',))
+    results = cursor.fetchall()
+    if results:
+        print("     Movie                                           Director              Year     Rating")
+        for movie in results:
+            print(f"{movie[1]:<48} {movie[2]:<25} {movie[3]:<10} {movie[4]}")
+    else:
+        print("This database doesn't have any directors with that name!")
+        print("Please pick another director to search for!")
+
 #Main code
 print("Welcome to the classic movies database!")
 print("This database contains a compilation of movies that will be remembered throughout time as classics.")
@@ -34,7 +53,8 @@ print("What would you like to do? ")
 print("1. View all the movies in a random list")
 print("2. View all the moveis in a ordered list")
 print("3. View a specific set of movies according to release year or director")
-order = input("Enter 1, 2 or 3: ")
+print("4. Quit Program")
+order = input("Enter 1, 2, 3 or 4: ")
 while True:
     #Check which order the user has chosen
     if order == "1":
@@ -108,8 +128,13 @@ while True:
                 order = "done"
                 break
             elif subset == "director":
-                pass
+                director = input("What director would you like to search for? ")
+                director_movies()
             else:
                 subset = input("Please enter a valid input (time or director): ")
+    elif order == "4":
+        break
     elif order == "done":
         break
+    else:
+        order = input("Please enter a number between 1 and 4: ")
