@@ -3,6 +3,7 @@
     1. View all the movies in a random list
     2. View all the movies in a ordered list (ordered by year of release or ordered by rating)
     3. View a specific subset of the movies database that contains movies from within a certain timeframe or from a specific director
+    (When you are searching for movies from a specific director, you don't need to enter the full name. Just part of the name is fine.)
     4. If you don't want to query this database you can quit the program"""
 
 import sqlite3
@@ -11,9 +12,6 @@ import sqlite3
 DATABASE = "famous_movies.db"
 db = sqlite3.connect(DATABASE)
 cursor = db.cursor()
-query = ""
-year1 = 0
-year2 = 0
 
 #Functions
 def print_results():
@@ -32,7 +30,7 @@ def timeframe():
         for movie in results:
             print(f"{movie[1]:<48} {movie[2]:<25} {movie[3]:<10} {movie[4]}")
     else:
-        print("There are no movies within that timeframe!")
+        print("There are no movies within that timeframe in my database!")
 
 def director_movies():
     query = "SELECT * FROM movies WHERE director LIKE ?"
@@ -67,6 +65,7 @@ while True:
         sort = sort.lower()
         while True:
             if sort == "year":
+                #Ask if the user wants new movies or old movies at the top
                 asc_dsc = input("Sorted by oldest at the top or newest at the top (new or old)? ")
                 while True:
                     asc_dsc = asc_dsc.lower()
@@ -87,6 +86,7 @@ while True:
                         asc_dsc = input("Please enter a valid input (old or new): ")
                 break
             elif sort == "rating":
+                #Ask the user if the lowest ratings or the highest ratings should be at the top
                 asc_dsc = input("Sorted by lowest or highest ratings (low or high)? ")
                 while True:
                     asc_dsc = asc_dsc.lower()
@@ -101,9 +101,11 @@ while True:
                         order = "done"
                         break
                     else:
+                        #Invalid input
                         asc_dsc = input("Please enter a valid input (low or high): ")
                 break
             else:
+                #Invalid input
                 sort = input("Please enter a valid input for what to sort the list of movies by (year or rating): ")
         break
     elif order == "3":
@@ -120,6 +122,8 @@ while True:
                             print("Please enter the smallest year first and then the larger year.")
                         elif year2 < 1939:
                             print("Please enter a year after 1939. This database does not contain movies older than that")
+                        elif year1 > 2025:
+                            print("You can't view movies from the future!")
                         else:
                             break
                 except ValueError:
